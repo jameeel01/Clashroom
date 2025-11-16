@@ -49,7 +49,7 @@ async function loadRoom() {
 
   // Detect grid size from room document
   const gridSize =
-    data.gridSize === "gridDifficult" ? 6 :
+    data.gridSize === "gridDifficult" ? 5 :
       data.gridSize === "gridNormal" ? 4 :
         3;
 
