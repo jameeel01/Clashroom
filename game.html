@@ -62,6 +62,19 @@
         </div>
       </div>
     </main>
+    <!-- Custom Alert Modal -->
+    <div id="customAlert" class="hidden fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
+      <div class="bg-white/80 p-8 rounded-3xl shadow-xl text-center max-w-sm">
+        <h2 id="alertTitle" class="text-2xl font-bold mb-4 text-black"></h2>
+        <p id="alertMsg" class="text-black mb-6"></p>
+
+        <button id="alertBtn"
+          class="px-6 py-2 bg-pink-500 text-white rounded-xl hover:bg-pink-600 transition">
+          OK
+        </button>
+      </div>
+    </div>
+
 
     <!-- Scripts -->
     <script type="module" src="navbar.js"></script>

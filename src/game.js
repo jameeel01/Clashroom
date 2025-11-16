@@ -183,7 +183,7 @@ function checkBingo(size) {
 
   // Rows
   for (let r = 0; r < size; r++) {
-    if (board[r].every((v) => v)) {
+    if (board[r].every(v => v)) {
       terminateRoom();
       return true;
     }
@@ -191,11 +191,7 @@ function checkBingo(size) {
 
   // Columns
   for (let c = 0; c < size; c++) {
-    let col = true;
-    for (let r = 0; r < size; r++) {
-      if (!board[r][c]) col = false;
-    }
-    if (col) {
+    if (board.every(row => row[c])) {
       terminateRoom();
       return true;
     }
