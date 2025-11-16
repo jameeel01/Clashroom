@@ -11,9 +11,8 @@ import {
 let isTerminating = false;
 let hasRedirected = false;
 
-// ============================================================
-// End the room (win or stop)
-// ============================================================
+// End the room
+
 async function terminateRoom() {
   const params = new URLSearchParams(window.location.search);
   const roomId = params.get("room");
@@ -46,9 +45,8 @@ async function terminateRoom() {
   }
 }
 
-// ============================================================
-// Watch if room is deleted OR if someone wins
-// ============================================================
+// Check if room deleted or someone wins
+
 function watchRoomExistence(roomId) {
   const roomRef = doc(db, "rooms", roomId);
 
@@ -71,9 +69,7 @@ function watchRoomExistence(roomId) {
   });
 }
 
-// ============================================================
 // Load room
-// ============================================================
 async function loadRoom(roomId) {
   if (!roomId) {
     alert("Room ID missing.");
@@ -105,9 +101,7 @@ async function loadRoom(roomId) {
   watchRoomExistence(roomId);
 }
 
-// ============================================================
-// Generate Bingo Grid
-// ============================================================
+// Generate board
 function generateBoard(phrases, gridSize) {
   const container = document.getElementById("boardContainer");
   container.innerHTML = "";
@@ -138,9 +132,7 @@ function generateBoard(phrases, gridSize) {
   });
 }
 
-// ============================================================
-// Bingo Checker
-// ============================================================
+// Bingo checker
 function checkBingo(size) {
   const cards = [...document.querySelectorAll(".bingo-card")];
   const board = [];
@@ -187,9 +179,7 @@ function checkBingo(size) {
   return false;
 }
 
-// ============================================================
-// Player Count + Player List (with “You” badge)
-// ============================================================
+// Player count + list
 function watchPlayerCount(roomId) {
   const playersRef = collection(db, "rooms", roomId, "players");
   const outputCount = document.getElementById("playerCount");
@@ -221,9 +211,7 @@ function watchPlayerCount(roomId) {
   });
 }
 
-// ============================================================
 // Stop Button
-// ============================================================
 document.getElementById("stopBtn").addEventListener("click", async () => {
   const params = new URLSearchParams(window.location.search);
   const roomId = params.get("room");
@@ -255,9 +243,7 @@ document.getElementById("stopBtn").addEventListener("click", async () => {
   }
 });
 
-// ============================================================
 // Start
-// ============================================================
 const params = new URLSearchParams(window.location.search);
 const roomId = params.get("room");
 loadRoom(roomId);
