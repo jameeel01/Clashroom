@@ -3,7 +3,8 @@ import {
   doc,
   getDoc,
   collection,
-  onSnapshot
+  onSnapshot,
+  deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 
@@ -174,6 +175,27 @@ function watchPlayerCount(roomId) {
   });
 }
 
+document.getElementById("stopBtn").addEventListener("click", async () => {
+  const params = new URLSearchParams(window.location.search);
+  const roomId = params.get("room");
+
+  if (!roomId) {
+    alert("No room ID found.");
+    return;
+  }
+
+  const roomRef = doc(db, "rooms", roomId);
+
+  try {
+    await deleteDoc(roomRef);
+    alert("Clash stopped and room deleted!");
+
+    window.location.href = "index.html";
+  } catch (error) {
+    console.error("Error deleting room:", error);
+    alert("Failed to delete room.");
+  }
+});
 
 
 loadRoom();
