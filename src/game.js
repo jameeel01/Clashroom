@@ -5,90 +5,82 @@ import {
   collection,
   onSnapshot,
   deleteDoc,
-  setDoc
+  setDoc,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 let isTerminating = false;
 let hasRedirected = false;
 
-// Terminate the room intentionally (win or stop)
+// ============================================================
+// End the room (win or stop)
+// ============================================================
 async function terminateRoom() {
   const params = new URLSearchParams(window.location.search);
   const roomId = params.get("room");
   const playerName = params.get("player") || params.get("host") || "Unknown";
 
-
   if (!roomId) return;
+
   const roomRef = doc(db, "rooms", roomId);
+  isTerminating = true;
 
-  try {
-    isTerminating = true;
+  await setDoc(
+    roomRef,
+    { winner: playerName, status: "closed" },
+    { merge: true }
+  );
 
-    //  Write winner field first
-    await setDoc(roomRef, { winner: playerName, status: "closed" }, { merge: true });
-
-    //  Delay deletion so others can read winner
-    setTimeout(async () => {
-      try {
-        await deleteDoc(roomRef);
-      } catch (err) {
-        console.error("Error deleting room:", err);
-      }
-    }, 3000);
-
-    if (!hasRedirected) {
-      hasRedirected = true;
-      alert("Bingo! You have Won");
-      window.location.href = "index.html";
+  // Wait 3 seconds before deleting
+  setTimeout(async () => {
+    try {
+      await deleteDoc(roomRef);
+    } catch (err) {
+      console.error("Error deleting room:", err);
     }
-  } catch (error) {
-    console.error("Error terminating room:", error);
-    alert("Failed to terminate room.");
+  }, 3000);
+
+  if (!hasRedirected) {
+    hasRedirected = true;
+    alert("Bingo! You have Won");
+    window.location.href = "index.html";
   }
 }
 
-// Watch the room existence constantly
+// ============================================================
+// Watch if room is deleted OR if someone wins
+// ============================================================
 function watchRoomExistence(roomId) {
   const roomRef = doc(db, "rooms", roomId);
 
-  onSnapshot(
-    roomRef,
-    (snapshot) => {
-      if (!snapshot.exists()) {
-        if (!isTerminating && !hasRedirected) {
-          hasRedirected = true;
-          alert("You lost!");
-          window.location.href = "index.html";
-        }
-        return;
-      }
-
-      const data = snapshot.data();
-      if (data?.winner && !isTerminating && !hasRedirected) {
+  onSnapshot(roomRef, (snapshot) => {
+    if (!snapshot.exists()) {
+      if (!isTerminating && !hasRedirected) {
         hasRedirected = true;
-        alert(`You lost! ${data.winner} won.`);
+        alert("You lost!");
         window.location.href = "index.html";
       }
-    },
-    (error) => {
-      console.error("Error watching room:", error);
-      if (!hasRedirected) {
-        hasRedirected = true;
-        window.location.href = "index.html";
-      }
+      return;
     }
-  );
+
+    const data = snapshot.data();
+    if (data?.winner && !isTerminating && !hasRedirected) {
+      hasRedirected = true;
+      alert(`You lost! ${data.winner} won.`);
+      window.location.href = "index.html";
+    }
+  });
 }
 
+// ============================================================
 // Load room
+// ============================================================
 async function loadRoom(roomId) {
   if (!roomId) {
     alert("Room ID missing.");
     return;
   }
 
-  const idText = document.getElementById("gameIdText");
-  if (idText) idText.innerText = roomId;
+  document.getElementById("gameIdText").innerText = roomId;
 
   const roomRef = doc(db, "rooms", roomId);
   const roomSnap = await getDoc(roomRef);
@@ -105,40 +97,36 @@ async function loadRoom(roomId) {
     data.gridSize === "gridDifficult"
       ? 5
       : data.gridSize === "gridNormal"
-        ? 4
-        : 3;
+      ? 4
+      : 3;
 
   generateBoard(data.phrases, gridSize);
-
-  // Start listeners
   watchPlayerCount(roomId);
   watchRoomExistence(roomId);
 }
 
-// Generate interactive board
+// ============================================================
+// Generate Bingo Grid
+// ============================================================
 function generateBoard(phrases, gridSize) {
   const container = document.getElementById("boardContainer");
-  if (!container) return;
-
   container.innerHTML = "";
   container.className = "grid gap-4 mx-auto mt-10 w-max font-sans";
   container.style.gridTemplateColumns = `repeat(${gridSize}, minmax(0, 1fr))`;
 
   const shuffled = [...phrases].sort(() => Math.random() - 0.5);
-  const countNeeded = gridSize * gridSize;
-  const selected = shuffled.slice(0, countNeeded);
+  const selected = shuffled.slice(0, gridSize * gridSize);
 
   selected.forEach((text) => {
     const card = document.createElement("div");
-
     card.className =
       "bingo-card bg-blue-100 border border-blue-300 rounded-lg p-6 w-44 h-44 flex justify-center items-center text-center cursor-pointer transition hover:bg-blue-200";
-
     card.innerText = text;
 
     card.addEventListener("click", () => {
-      card.classList.toggle("selected");
+      if (isTerminating) return;
 
+      card.classList.toggle("selected");
       card.classList.remove("animate-pop");
       void card.offsetWidth;
       card.classList.add("animate-pop");
@@ -150,129 +138,101 @@ function generateBoard(phrases, gridSize) {
   });
 }
 
-// Selected tile CSS
-const styleSelected = document.createElement("style");
-styleSelected.innerHTML = `
-  .bingo-card.selected {
-      background-color: #86efac !important; 
-      text-decoration: line-through;
-      box-shadow: 0 0 10px rgba(34,197,94,0.7);
-      border-color: #22c55e;
-  }
-`;
-document.head.appendChild(styleSelected);
-
-// Card select animation
-const stylePop = document.createElement("style");
-stylePop.innerHTML = `
-  @keyframes pop {
-    0%   { transform: scale(1); }
-    50%  { transform: scale(1.12); }
-    100% { transform: scale(1); }
-  }
-
-  .animate-pop {
-    animation: pop 0.2s ease-out;
-  }
-`;
-document.head.appendChild(stylePop);
-
-// Check for Bingo
+// ============================================================
+// Bingo Checker
+// ============================================================
 function checkBingo(size) {
   const cards = [...document.querySelectorAll(".bingo-card")];
-
   const board = [];
+
   for (let r = 0; r < size; r++) {
     board[r] = [];
     for (let c = 0; c < size; c++) {
-      const index = r * size + c;
-      board[r][c] = cards[index].classList.contains("selected");
+      board[r][c] = cards[r * size + c].classList.contains("selected");
     }
   }
 
-  // Rows
-  for (let r = 0; r < size; r++) {
-    if (board[r].every((v) => v)) {
-      terminateRoom();
-      return true;
-    }
-  }
-  // Columns
-  for (let c = 0; c < size; c++) {
-    let col = true;
-    for (let r = 0; r < size; r++) {
-      if (!board[r][c]) col = false;
-    }
-    if (col) {
-      terminateRoom();
-      return true;
-    }
-  }
-  // Diagonal TL → BR
-  if (board.every((row, i) => row[i])) {
-    terminateRoom();
-    return true;
-  }
-  // Diagonal TR → BL
-  if (board.every((row, i) => row[size - i - 1])) {
-    terminateRoom();
-    return true;
-  }
+  const rowWin = board.some((row) => row.every((v) => v));
+  const colWin = [...Array(size)].some((c) => board.every((row) => row[c]));
+  const diag1 = board.every((row, i) => row[i]);
+  const diag2 = board.every((row, i) => row[size - i - 1]);
 
-  return false;
+  if (rowWin || colWin || diag1 || diag2) {
+    terminateRoom();
+  }
 }
 
-// Player count
+// ============================================================
+// Player Count + Player List (with “You” badge)
+// ============================================================
 function watchPlayerCount(roomId) {
   const playersRef = collection(db, "rooms", roomId, "players");
-  const output = document.getElementById("playerCount");
-  if (!output) return;
+  const outputCount = document.getElementById("playerCount");
+  const outputList = document.getElementById("playerList");
+
+  const params = new URLSearchParams(window.location.search);
+  const currentUser = params.get("player") || params.get("host") || "Unknown";
 
   onSnapshot(playersRef, (snapshot) => {
-    output.innerText = ` ${snapshot.size}`;
-  });
-}
+    outputCount.innerText = ` ${snapshot.size}`;
 
-// Stop button
-const stopBtn = document.getElementById("stopBtn");
-if (stopBtn) {
-  stopBtn.addEventListener("click", async () => {
-    const params = new URLSearchParams(window.location.search);
-    const roomId = params.get("room");
-    const playerName = document.getElementById("clasherName")?.value || "Unknown";
+    let names = [];
+    snapshot.forEach((docSnap) => {
+      const name = docSnap.id;
 
-    if (!roomId) {
-      alert("No room ID found.");
-      return;
-    }
-
-    const roomRef = doc(db, "rooms", roomId);
-
-    try {
-      isTerminating = true;
-      await setDoc(roomRef, { winner: playerName, status: "closed" }, { merge: true });
-
-      setTimeout(async () => {
-        try {
-          await deleteDoc(roomRef);
-        } catch (err) {
-          console.error("Error deleting room:", err);
-        }
-      }, 3000);
-
-      if (!hasRedirected) {
-        hasRedirected = true;
-        alert("Bingo terminated");
-        window.location.href = "index.html";
+      if (name === currentUser) {
+        names.push(
+          `• ${name} <span class="text-yellow-300 font-bold">(You)</span>`
+        );
+      } else {
+        names.push(`• ${name}`);
       }
-    } catch (error) {
-      console.error("Error deleting room:", error);
-      alert("Failed to delete room.");
-    }
+    });
+
+    outputList.innerHTML =
+      names.length > 0
+        ? names.map((n) => `<div>${n}</div>`).join("")
+        : "<div>No players</div>";
   });
 }
 
-// Entry point
+// ============================================================
+// Stop Button
+// ============================================================
+document.getElementById("stopBtn").addEventListener("click", async () => {
+  const params = new URLSearchParams(window.location.search);
+  const roomId = params.get("room");
+  const playerName = params.get("player") || params.get("host") || "Host";
+
+  if (!roomId) return;
+
+  const roomRef = doc(db, "rooms", roomId);
+  isTerminating = true;
+
+  await setDoc(
+    roomRef,
+    { winner: playerName, status: "closed" },
+    { merge: true }
+  );
+
+  setTimeout(async () => {
+    try {
+      await deleteDoc(roomRef);
+    } catch (err) {
+      console.error("Delete error:", err);
+    }
+  }, 3000);
+
+  if (!hasRedirected) {
+    hasRedirected = true;
+    alert("Clash ended by host");
+    window.location.href = "index.html";
+  }
+});
+
+// ============================================================
+// Start
+// ============================================================
 const params = new URLSearchParams(window.location.search);
 const roomId = params.get("room");
 loadRoom(roomId);

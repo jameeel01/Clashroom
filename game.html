@@ -1,59 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./style.css" />
-</head>
+  </head>
 
-<body class="bg-pink-200">
+  <body class="bg-pink-200">
     <!-- Nav -->
     <div id="navbar"></div>
 
     <!-- Main -->
-    <main class="flex flex-col md:flex-row justify-between max-w-full mx-auto mt-10 mb-20">
+    <main
+      class="flex flex-col md:flex-row justify-between max-w-full mx-auto mt-10 mb-20"
+    >
+      <!-- LEFT SIDE: BINGO GRID -->
+      <div class="grid gap-x-16 gap-y-10 ml-10" id="boardContainer">
+        <!-- Tiles will be inserted by game.js -->
+      </div>
 
-        <!-- LEFT SIDE: BINGO GRID -->
-        <div class="grid gap-x-16 gap-y-10 ml-10" id="boardContainer">
-            <!-- Tiles will be inserted by game.js -->
+      <!-- RIGHT SIDE: GAME INFO PANEL -->
+      <div
+        class="bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 border-4 border-white w-72 h-[380px] mr-10 p-6 rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-300"
+      >
+        <!-- Game ID -->
+        <h2
+          class="text-xl font-bold mb-3 border-b-2 border-black pb-1 drop-shadow"
+        >
+          Game ID:
+          <span id="gameIdText" class="text-black">(Unique Room ID)</span>
+        </h2>
+
+        <!-- Player Count -->
+        <p class="mt-4 text-lg text-white font-[Pixelify_Sans]">
+          Current clashers: <span id="playerCount" class="font-bold">0</span>
+        </p>
+
+        <!-- Player List -->
+        <div
+          id="playerList"
+          class="mt-2 text-white text-lg font-[Pixelify_Sans] leading-relaxed"
+        ></div>
+
+        <!-- Divider -->
+        <div class="border-t border-white/50 my-8"></div>
+
+        <!-- Stop Button -->
+        <div class="flex justify-center mt-12">
+          <button
+            id="stopBtn"
+            class="bg-orange-500 hover:bg-orange-600 transition py-3 px-10 rounded-2xl text-white font-sans hover:scale-105 animate-pulse"
+          >
+            Stop Clash
+          </button>
         </div>
-
-        <!-- RIGHT SIDE: GAME INFO PANEL -->
-        <div class="bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 border-4 border-white w-72 h-[380px]
-            mr-10 p-6 rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-300">
-
-            <!-- Game ID -->
-            <h2 class="text-xl  font-bold mb-3 border-b-2 border-black pb-1  drop-shadow">
-                Game ID: <span id="gameIdText" class="text-black">(Unique Room ID)</span>
-            </h2>
-
-            <!-- Player Count -->
-            <p class="mt-4 text-lg text-white font-[Pixelify_Sans]">
-                Current clashers: <span id="playerCount" class="font-bold">0</span>
-            </p>
-
-            <!-- Divider -->
-            <div class="border-t border-white/50 my-8"></div>
-
-            <!-- Stop Button -->
-            <div class="flex justify-center mt-12">
-                <button id="stopBtn" class="bg-orange-500 hover:bg-orange-600 transition py-3 px-10 rounded-2xl text-white font-sans 
-                     hover:scale-105 animate-pulse">
-                    Stop Clash
-                </button>
-            </div>
-        </div>
-
-
+      </div>
     </main>
 
     <!-- Scripts -->
     <script type="module" src="navbar.js"></script>
     <script type="module" src="./src/game.js"></script>
-</body>
-
+  </body>
 </html>
