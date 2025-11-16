@@ -140,7 +140,7 @@ function generateBoard(phrases, gridSize) {
   const container = document.getElementById("boardContainer");
   container.innerHTML = "";
   container.className = "grid gap-4 mx-auto mt-10 w-max font-sans";
-  container.style.gridTemplateColumns = `repeat(${gridSize}, minmax(0, 1fr))`;
+  container.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
 
   const shuffled = [...phrases].sort(() => Math.random() - 0.5);
   const selected = shuffled.slice(0, gridSize * gridSize);
@@ -148,7 +148,7 @@ function generateBoard(phrases, gridSize) {
   selected.forEach((text) => {
     const card = document.createElement("div");
     card.className =
-      "bingo-card bg-blue-100 border border-blue-300 rounded-lg p-6 w-44 h-44 flex justify-center items-center text-center cursor-pointer transition hover:bg-blue-200";
+      "bingo-card bg-blue-100 border border-blue-300 rounded-lg p-6 flex justify-center items-center text-center cursor-pointer transition hover:bg-blue-200";
     card.innerText = text;
 
     card.addEventListener("click", () => {
