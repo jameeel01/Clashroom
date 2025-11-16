@@ -7,73 +7,103 @@ import {
   deleteDoc,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+// Flags to prevent duplicate alerts
+let isTerminating = false;
+let hasRedirected = false;
+
+// Terminate the room intentionally (win or stop)
 async function terminateRoom() {
   const params = new URLSearchParams(window.location.search);
   const roomId = params.get("room");
-
   if (!roomId) return;
 
   const roomRef = doc(db, "rooms", roomId);
 
   try {
+    isTerminating = true; // mark intentional delete
     await deleteDoc(roomRef);
-    alert("Bingo! You have Won");
-    window.location.href = "index.html";
+
+    if (!hasRedirected) {
+      hasRedirected = true;
+      alert("Bingo! You have Won");
+      window.location.href = "index.html";
+    }
   } catch (error) {
     console.error("Error terminating room:", error);
     alert("Failed to terminate room.");
   }
 }
 
-// Load rooms
-async function loadRoom() {
-  const params = new URLSearchParams(window.location.search);
-  const roomId = params.get("room");
+// Watch the room existence constantly
+function watchRoomExistence(roomId) {
+  const roomRef = doc(db, "rooms", roomId);
 
+  onSnapshot(
+    roomRef,
+    (snapshot) => {
+      if (!snapshot.exists()) {
+        if (!isTerminating && !hasRedirected) {
+          hasRedirected = true;
+          alert("Room no longer exists.");
+          window.location.href = "index.html";
+        }
+      }
+    },
+    (error) => {
+      console.error("Error watching room:", error);
+      if (!hasRedirected) {
+        hasRedirected = true;
+        window.location.href = "index.html";
+      }
+    }
+  );
+}
+
+// Load room
+async function loadRoom(roomId) {
   if (!roomId) {
     alert("Room ID missing.");
     return;
   }
 
-  // 🔥 Show room ID in UI
+  // Show room ID in UI
   const idText = document.getElementById("gameIdText");
-  if (idText) idText.textContent = roomId;
+  if (idText) idText.innerText = roomId;
 
-  // Fetch room data
   const roomRef = doc(db, "rooms", roomId);
   const roomSnap = await getDoc(roomRef);
 
   if (!roomSnap.exists()) {
     alert("Room not found!");
+    window.location.href = "index.html";
     return;
   }
 
   const data = roomSnap.data();
 
-  // Detect grid size
   const gridSize =
     data.gridSize === "gridDifficult"
       ? 5
       : data.gridSize === "gridNormal"
-      ? 4
-      : 3;
+        ? 4
+        : 3;
 
   generateBoard(data.phrases, gridSize);
 
-  // Start listening for player count
+  // Start listeners
   watchPlayerCount(roomId);
+  watchRoomExistence(roomId);
 }
 
 // Generate interactive board
 function generateBoard(phrases, gridSize) {
   const container = document.getElementById("boardContainer");
+  if (!container) return;
+
   container.innerHTML = "";
-  container.classList.add("font-sans");
+  container.className = "grid gap-4 mx-auto mt-10 w-max font-sans";
+  container.style.gridTemplateColumns = `repeat(${gridSize}, minmax(0, 1fr))`;
 
-  // Create grid columns based on size
-  container.className = `grid gap-4 mx-auto mt-10 w-max grid-cols-${gridSize}`;
-
-  // Shuffle scenarios
   const shuffled = [...phrases].sort(() => Math.random() - 0.5);
   const countNeeded = gridSize * gridSize;
   const selected = shuffled.slice(0, countNeeded);
@@ -86,11 +116,9 @@ function generateBoard(phrases, gridSize) {
 
     card.innerText = text;
 
-    // Tile click handling
     card.addEventListener("click", () => {
       card.classList.toggle("selected");
 
-      // CLICK ANIMATION
       card.classList.remove("animate-pop");
       void card.offsetWidth;
       card.classList.add("animate-pop");
@@ -133,7 +161,6 @@ document.head.appendChild(stylePop);
 function checkBingo(size) {
   const cards = [...document.querySelectorAll(".bingo-card")];
 
-  // Create 2D array of selected tiles
   const board = [];
   for (let r = 0; r < size; r++) {
     board[r] = [];
@@ -143,14 +170,14 @@ function checkBingo(size) {
     }
   }
 
-  // Check each row
+  // Rows
   for (let r = 0; r < size; r++) {
     if (board[r].every((v) => v)) {
       terminateRoom();
+      return true;
     }
   }
-
-  // Check each column
+  // Columns
   for (let c = 0; c < size; c++) {
     let col = true;
     for (let r = 0; r < size; r++) {
@@ -158,17 +185,18 @@ function checkBingo(size) {
     }
     if (col) {
       terminateRoom();
+      return true;
     }
   }
-
-  // Check diagonal TL → BR
+  // Diagonal TL → BR
   if (board.every((row, i) => row[i])) {
     terminateRoom();
+    return true;
   }
-
-  // Check diagonal TR → BL
+  // Diagonal TR → BL
   if (board.every((row, i) => row[size - i - 1])) {
     terminateRoom();
+    return true;
   }
 
   return false;
@@ -178,32 +206,42 @@ function checkBingo(size) {
 function watchPlayerCount(roomId) {
   const playersRef = collection(db, "rooms", roomId, "players");
   const output = document.getElementById("playerCount");
+  if (!output) return;
 
   onSnapshot(playersRef, (snapshot) => {
     output.innerText = ` ${snapshot.size}`;
   });
 }
 
-document.getElementById("stopBtn").addEventListener("click", async () => {
-  const params = new URLSearchParams(window.location.search);
-  const roomId = params.get("room");
+// Stop button
+const stopBtn = document.getElementById("stopBtn");
+if (stopBtn) {
+  stopBtn.addEventListener("click", async () => {
+    const params = new URLSearchParams(window.location.search);
+    const roomId = params.get("room");
+    if (!roomId) {
+      alert("No room ID found.");
+      return;
+    }
 
-  if (!roomId) {
-    alert("No room ID found.");
-    return;
-  }
+    const roomRef = doc(db, "rooms", roomId);
 
-  const roomRef = doc(db, "rooms", roomId);
+    try {
+      isTerminating = true;
+      await deleteDoc(roomRef);
+      if (!hasRedirected) {
+        hasRedirected = true;
+        alert("Bingo terminated");
+        window.location.href = "index.html";
+      }
+    } catch (error) {
+      console.error("Error deleting room:", error);
+      alert("Failed to delete room.");
+    }
+  });
+}
 
-  try {
-    await deleteDoc(roomRef);
-    alert("Bingo terminated");
-
-    window.location.href = "index.html";
-  } catch (error) {
-    console.error("Error deleting room:", error);
-    alert("Failed to delete room.");
-  }
-});
-
-loadRoom();
+// Entry point
+const params = new URLSearchParams(window.location.search);
+const roomId = params.get("room");
+loadRoom(roomId);
