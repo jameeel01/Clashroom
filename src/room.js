@@ -7,28 +7,22 @@ import {
   serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-console.log("🔥 room.js loaded");
+console.log("room.js loaded");
 
-// =============================
 // DOM ELEMENTS
-// =============================
 const joinBtn = document.getElementById("joinRoomBtn");
 const createBtn = document.getElementById("createRoomBtn");
 const checkbox = document.getElementById("customCheck");
 const textarea = document.getElementById("customScenariosInput");
 
-// =============================
 // CUSTOM CHECKBOX LOGIC
-// =============================
 if (checkbox && textarea) {
   checkbox.addEventListener("change", () => {
     textarea.classList.toggle("hidden", !checkbox.checked);
   });
 }
 
-// =============================
 // JOIN ROOM
-// =============================
 if (joinBtn) {
   console.log("Join button detected.");
 
@@ -47,7 +41,7 @@ if (joinBtn) {
 
     if (!roomSnap.exists()) {
       alert("Room does not exist!");
-      return;
+      window.location.href = "index.html";
     }
 
     // Add player to room subcollection
@@ -62,9 +56,7 @@ if (joinBtn) {
   });
 }
 
-// =============================
 // CREATE ROOM
-// =============================
 if (createBtn) {
   console.log("Create button detected.");
 
