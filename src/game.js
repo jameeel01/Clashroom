@@ -181,14 +181,39 @@ function checkBingo(size) {
     }
   }
 
-  const rowWin = board.some((row) => row.every((v) => v));
-  const colWin = [...Array(size)].some((c) => board.every((row) => row[c]));
-  const diag1 = board.every((row, i) => row[i]);
-  const diag2 = board.every((row, i) => row[size - i - 1]);
-
-  if (rowWin || colWin || diag1 || diag2) {
-    terminateRoom();
+  // Rows
+  for (let r = 0; r < size; r++) {
+    if (board[r].every((v) => v)) {
+      terminateRoom();
+      return true;
+    }
   }
+
+  // Columns
+  for (let c = 0; c < size; c++) {
+    let col = true;
+    for (let r = 0; r < size; r++) {
+      if (!board[r][c]) col = false;
+    }
+    if (col) {
+      terminateRoom();
+      return true;
+    }
+  }
+
+  // Diagonal TL → BR
+  if (board.every((row, i) => row[i])) {
+    terminateRoom();
+    return true;
+  }
+
+  // Diagonal TR → BL
+  if (board.every((row, i) => row[size - i - 1])) {
+    terminateRoom();
+    return true;
+  }
+
+  return false;
 }
 
 // Player count + list
