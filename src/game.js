@@ -31,8 +31,8 @@ async function loadRoom() {
   // Detect grid size from room document
   const gridSize =
     data.gridSize === "gridDifficult" ? 6 :
-    data.gridSize === "gridNormal" ? 4 :
-    3;
+      data.gridSize === "gridNormal" ? 4 :
+        3;
 
   generateBoard(data.phrases, gridSize);
 
@@ -60,7 +60,7 @@ function generateBoard(phrases, gridSize) {
     const card = document.createElement("div");
 
     card.className =
-      "bingo-card bg-blue-100 border border-blue-300 rounded-lg p-6 w-40 h-24 flex justify-center items-center text-center cursor-pointer transition hover:bg-blue-200";
+      "bingo-card bg-blue-100 border border-blue-300 rounded-lg p-6 w-44 h-44 flex justify-center items-center text-center cursor-pointer transition hover:bg-blue-200";
 
     card.innerText = text;
 
@@ -70,7 +70,7 @@ function generateBoard(phrases, gridSize) {
 
       // CLICK ANIMATION
       card.classList.remove("animate-pop");
-      void card.offsetWidth; 
+      void card.offsetWidth;
       card.classList.add("animate-pop");
 
       checkBingo(gridSize);
