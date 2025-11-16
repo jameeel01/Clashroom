@@ -1,53 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="./style.css" />
-  </head>
 
-  <body class="bg-pink-200">
-    <!-- Nav -->
-    <div id="navbar"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
 
-    <!-- Main -->
-    <main class="flex flex-row justify-between max-w-7xl mx-auto mt-10">
+<body class="bg-pink-200">
+  <!-- Nav -->
+  <div id="navbar"></div>
 
-        <!-- LEFT SIDE: BINGO GRID -->
-        <div class="grid gap-x-16 gap-y-10 ml-10" id="boardContainer">
-            <!-- Tiles will be inserted by game.js -->
-        </div>
+  <!-- Main -->
+  <main class="flex flex-col md:flex-row justify-between max-w-full mx-auto mt-10 mb-20">
 
-        <!-- RIGHT SIDE: GAME INFO PANEL -->
-        <div class="bg-[#C8F8F8] border border-gray-400 w-72 h-[380px] mr-10 p-6">
-            
-            <h2 class="text-xl font-bold mb-3 border-b-2 border-black pb-1">
-                Game ID: <span id="gameIdText">(Unique Room ID)</span>
-            </h2>
+    <!-- LEFT SIDE: BINGO GRID -->
+    <div class="grid gap-x-16 gap-y-10 ml-10" id="boardContainer">
+      <!-- Tiles will be inserted by game.js -->
+    </div>
 
-            <p class="mt-4">Current clashers: <span id="playerCount">0</span></p>
+    <!-- RIGHT SIDE: GAME INFO PANEL -->
+    <div class="bg-[#C8F8F8] border border-gray-400 w-72 h-[380px] mr-10 p-6">
 
-            <p class="mt-6">Clashes won: <span id="winsCount">0</span></p>
+      <h2 class="text-xl font-bold mb-3 border-b-2 border-black pb-1">
+        Game ID: <span id="gameIdText">(Unique Room ID)</span>
+      </h2>
 
-            <div class="flex justify-center mt-16">
-                <button 
-                    id="stopBtn"
-                    class="bg-orange-500 hover:bg-orange-600 transition py-3 px-10 rounded-2xl text-white font-sans">
-                    Stop Clash
-                </button>
-            </div>
-        </div>
+      <p class="mt-4">Current clashers: <span id="playerCount">0</span></p>
 
-    </main>
+      <p class="mt-6">Clashes won: <span id="winsCount">0</span></p>
 
-    <!-- Scripts -->
-    <script type="module" src="navbar.js"></script>
-    <script type="module" src="./src/game.js"></script>
-  </body>
+      <div class="flex justify-center mt-16">
+        <button id="stopBtn"
+          class="bg-orange-500 hover:bg-orange-600 transition py-3 px-10 rounded-2xl text-white font-sans">
+          Stop Clash
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Scripts -->
+  <script type="module" src="navbar.js"></script>
+  <script type="module" src="./src/game.js"></script>
+</body>
+
 </html>
