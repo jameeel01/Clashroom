@@ -4,7 +4,7 @@ import {
   getDoc,
   collection,
   onSnapshot,
-  deleteDoc
+  deleteDoc,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 async function terminateRoom() {
@@ -25,7 +25,6 @@ async function terminateRoom() {
   }
 }
 
-
 // Load rooms
 async function loadRoom() {
   const params = new URLSearchParams(window.location.search);
@@ -36,7 +35,11 @@ async function loadRoom() {
     return;
   }
 
-  // Fetch room data from Firestore
+  // 🔥 Show room ID in UI
+  const idText = document.getElementById("gameIdText");
+  if (idText) idText.textContent = roomId;
+
+  // Fetch room data
   const roomRef = doc(db, "rooms", roomId);
   const roomSnap = await getDoc(roomRef);
 
@@ -47,19 +50,19 @@ async function loadRoom() {
 
   const data = roomSnap.data();
 
-  // Detect grid size from room document
+  // Detect grid size
   const gridSize =
-    data.gridSize === "gridDifficult" ? 5 :
-      data.gridSize === "gridNormal" ? 4 :
-        3;
+    data.gridSize === "gridDifficult"
+      ? 5
+      : data.gridSize === "gridNormal"
+      ? 4
+      : 3;
 
   generateBoard(data.phrases, gridSize);
 
   // Start listening for player count
   watchPlayerCount(roomId);
 }
-
-
 
 // Generate interactive board
 function generateBoard(phrases, gridSize) {
@@ -99,8 +102,6 @@ function generateBoard(phrases, gridSize) {
   });
 }
 
-
-
 // Selected tile CSS
 const styleSelected = document.createElement("style");
 styleSelected.innerHTML = `
@@ -112,8 +113,6 @@ styleSelected.innerHTML = `
   }
 `;
 document.head.appendChild(styleSelected);
-
-
 
 // Card select animation
 const stylePop = document.createElement("style");
@@ -129,8 +128,6 @@ stylePop.innerHTML = `
   }
 `;
 document.head.appendChild(stylePop);
-
-
 
 // Check for Bingo
 function checkBingo(size) {
@@ -148,7 +145,7 @@ function checkBingo(size) {
 
   // Check each row
   for (let r = 0; r < size; r++) {
-    if (board[r].every(v => v)) {
+    if (board[r].every((v) => v)) {
       terminateRoom();
     }
   }
@@ -176,8 +173,6 @@ function checkBingo(size) {
 
   return false;
 }
-
-
 
 // Player count
 function watchPlayerCount(roomId) {
@@ -210,7 +205,5 @@ document.getElementById("stopBtn").addEventListener("click", async () => {
     alert("Failed to delete room.");
   }
 });
-
-
 
 loadRoom();
