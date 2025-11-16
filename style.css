@@ -6,3 +6,9 @@
     font-weight: 700;
     font-style: normal;
 }
+
+.bingo-card.selected {
+  background-color: #4ade80 !important;
+  border-color: #22c55e !important;
+  color: black;
+}
