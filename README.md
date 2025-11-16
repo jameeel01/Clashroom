@@ -21,7 +21,8 @@ ClashRoom is a multiplayer web game where each player receives a unique bingo ca
 ## 4. Winning the Game
 You win by completing:
 - A full row  
-- A full column  
+- A full column
+- A full Diagonal
 
 When a player completes one, the game immediately ends and the winner is declared.
 
