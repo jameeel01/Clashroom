@@ -7,6 +7,24 @@ import {
   deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+async function terminateRoom() {
+  const params = new URLSearchParams(window.location.search);
+  const roomId = params.get("room");
+
+  if (!roomId) return;
+
+  const roomRef = doc(db, "rooms", roomId);
+
+  try {
+    await deleteDoc(roomRef);
+    alert("Bingo! You have Won");
+    window.location.href = "index.html";
+  } catch (error) {
+    console.error("Error terminating room:", error);
+    alert("Failed to terminate room.");
+  }
+}
+
 
 // Load rooms
 async function loadRoom() {
@@ -131,8 +149,7 @@ function checkBingo(size) {
   // Check each row
   for (let r = 0; r < size; r++) {
     if (board[r].every(v => v)) {
-      alert("BINGO! (Row)");
-      return true;
+      terminateRoom();
     }
   }
 
@@ -143,21 +160,18 @@ function checkBingo(size) {
       if (!board[r][c]) col = false;
     }
     if (col) {
-      alert("BINGO! (Column)");
-      return true;
+      terminateRoom();
     }
   }
 
   // Check diagonal TL → BR
   if (board.every((row, i) => row[i])) {
-    alert("BINGO! (Diagonal)");
-    return true;
+    terminateRoom();
   }
 
   // Check diagonal TR → BL
   if (board.every((row, i) => row[size - i - 1])) {
-    alert("BINGO! (Diagonal)");
-    return true;
+    terminateRoom();
   }
 
   return false;
@@ -188,7 +202,7 @@ document.getElementById("stopBtn").addEventListener("click", async () => {
 
   try {
     await deleteDoc(roomRef);
-    alert("Clash stopped and room deleted!");
+    alert("Bingo terminated");
 
     window.location.href = "index.html";
   } catch (error) {
@@ -196,6 +210,7 @@ document.getElementById("stopBtn").addEventListener("click", async () => {
     alert("Failed to delete room.");
   }
 });
+
 
 
 loadRoom();
