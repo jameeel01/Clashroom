@@ -62,9 +62,20 @@
         </div>
       </div>
     </main>
+    <div id="customAlert" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden">
+      <div class="bg-white/20 rounded-3xl p-8 shadow-xl border border-white/30 text-center text-white w-[300px]">
+        <h2 id="alertTitle" class="text-2xl font-bold mb-2"></h2>
+        <p id="alertMsg" class="mb-6"></p>
 
+        <button id="alertBtn"
+                class="px-6 py-2 rounded-xl bg-pink-400/70 text-white font-semibold shadow-md hover:bg-pink-400 transition">
+          OK
+        </button>
+      </div>
+    </div>
     <!-- Scripts -->
     <script type="module" src="navbar.js"></script>
     <script type="module" src="./src/game.js"></script>
+    
   </body>
 </html>
