@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Lecture Bingo – Game Rules</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,9 +12,78 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 
-<body class="bg-pink-200">
+<body class="bg-pink-200 font-sans">
+    <!-- Navbar placeholder -->
     <div id="navbar"></div>
 
+    <!-- Main content -->
+    <main class="max-w-3xl mx-auto p-8">
+        <h1 class="text-3xl font-bold mb-6 text-center">Lecture Bingo – Game Rules</h1>
+
+        <section class="bg-white rounded-lg shadow-md p-6 space-y-6">
+            <div>
+                <h2 class="text-xl font-semibold ">1. Overview</h2>
+                <p class="font-sans">
+                    Lecture Bingo is a multiplayer game where each player receives a unique bingo card filled with
+                    common
+                    lecture scenarios.
+                    As the lecture happens in real time, players mark off squares when the corresponding scenario
+                    occurs.
+                    Get a full row or column before your opponent to win!
+                </p>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-semibold">2. Getting Started</h2>
+                <p class="font-sans">
+                    Join or create a game. Once both players are connected, each is given a randomly generated bingo
+                    card.
+                    Do not refresh or leave the page during a game, or your card may be lost.
+                </p>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-semibold">3. How to Play</h2>
+                <p class="font-sans">
+                    Watch the lecture. Each square describes a scenario (e.g., “Professor goes off-topic,” “Someone asks
+                    to repeat the slide,” “Technical issue occurs,” etc.).
+                    Mark a square by tapping/clicking it only when the scenario has actually happened.
+                    Once marked, squares cannot be unmarked—so be honest!
+                </p>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-semibold">4. Winning the Game</h2>
+                <ul class="list-disc list-inside ">
+                    <li class="font-sans">You complete any full row</li>
+                    <li class="font-sans">Any full column</li>
+                </ul>
+                <p class="mt-2 font-sans">When a player completes one, the game immediately ends and the winner is
+                    declared.</p>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-semibold">5. Fair Play & Etiquette</h2>
+                <ul class="list-disc list-inside ">
+                    <li class="font-sans">Only mark squares for events that genuinely occur during the lecture.</li>
+                    <li class="font-sans">Don’t reveal your card to the other player unless you want to!</li>
+                    <li class="font-sans">If a disputed event happens, the game relies on player honesty—Lecture Bingo
+                        is meant to be
+                        fun,
+                        not competitive.</li>
+
+                </ul>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-semibold">6. End of Game</h2>
+                <ul class="list-disc list-inside font-sans">
+                    <li class="font-sans">Start a new round with fresh random cards</li>
+                    <li class="font-sans">Return to the main menu</li>
+                </ul>
+            </div>
+        </section>
+    </main>
 
     <script src="navbar.js"></script>
 </body>
