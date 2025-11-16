@@ -10,34 +10,38 @@
 
 <body class="flex flex-col min-h-screen">
   <!-- Header -->
-  <header class="flex justify-center py-3 bg-green-400">
-    <h1 class="font-extrabold">Clashroom</h1>
-  </header>
-
+  <div id="navbar"></div>
   <!-- Main content -->
-  <div class="flex flex-col flex-grow mx-8">
+  <div class="flex flex-col mx-8">
     <div class="flex justify-center px-3">
-      <div class="text-2xl text-center max-w-2xl">
+      <div class="font-semibold text-center max-w-2xl">
         <p class="py-3">
           Bored during your lecture? Let's play ClashRoom!
         </p>
-        <p>
+        <p class="py-3">
+          ClashRoom is a lecture bingo game to be played by students (No teachers!)
+        </p>
+        <p class="py-3">
           Guess what will happen during today's lecture and be crowned the winner!
         </p>
+        <p class="py-16">Invite or join your friend's room below</p>
       </div>
     </div>
 
     <!-- Buttons -->
-    <div class="flex justify-center mt-32 gap-16 py-8">
-      <a href="" class="bg-green-500 text-white font-bold py-2 px-6 rounded">Create</a>
-      <a href="" class="bg-blue-500 text-white font-bold py-2 px-6 rounded">Join</a>
+    <div class="flex justify-center mt-12 gap-16 py-3">
+      <a href="create.html" class="bg-green-500 text-white font-bold py-6 px-16 rounded">Create</a>
+      <a href="join.html" class="bg-blue-500 text-white font-bold py-6 px-16 rounded">Join</a>
     </div>
   </div>
 
   <!-- Rule Link-->
-  <footer class="flex justify-center mb-5">
-    <a href="#" class="font-medium text-blue-500 text-fg-brand hover:underline text-indigo-700">Rules</a>
+  <footer class="flex justify-center mt-32">
+    <a href="rules.html" class="font-medium  text-fg-brand hover:underline hover:text-indigo-700">Rules</a>
   </footer>
+
+  <!-- Scripts-->
+  <script src="navbar.js"></script>
 </body>
 
 </html>
