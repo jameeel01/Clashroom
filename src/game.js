@@ -35,7 +35,7 @@ async function loadRoom() {
     return;
   }
 
-  // 🔥 Show room ID in UI
+  // Show room ID in UI
   const idText = document.getElementById("gameIdText");
   if (idText) idText.textContent = roomId;
 
