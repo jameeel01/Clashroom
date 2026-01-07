@@ -18,6 +18,11 @@ ClashRoom is a multiplayer web game where each player receives a unique bingo ca
 2. Each square describes a scenario (e.g., “Professor goes off-topic,” “Someone asks to repeat the slide,” “Technical issue occurs”).
 3. Tap or click a square to mark it **only when the scenario has actually happened**.
 
+<img width="1725" height="944" alt="image" src="https://github.com/user-attachments/assets/cbe4428d-1486-4788-94d8-9d418f28fbbc" />
+<img width="1725" height="944" alt="image" src="https://github.com/user-attachments/assets/f141be8e-c2ba-43c2-9d84-42d5006f6de6" />
+<img width="1725" height="944" alt="image" src="https://github.com/user-attachments/assets/0d0b021b-6e95-4540-b4d8-f1f5c5f9d8d7" />
+
+
 ## 4. Winning the Game
 You win by completing:
 - A full row  
